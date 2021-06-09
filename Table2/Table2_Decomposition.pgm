@@ -1,0 +1,191 @@
+new; cls; 
+#include olss.src;
+#include hpfilter.set;
+
+
+output file = Table2_Decomposition.out reset;
+
+load dat0[148,16] = Table2_Decomposition.txt;     
+@nxr	Rel_Inc	NIIY	tby	tradey	totqn	resid_ave	resid_diff	resid_diff2	resid_ECM1	resid_ECM2	resid_ECM3	resid_ECM3srlr	resid_ECM3sr@
+N = cols(dat0); 
+T = rows(dat0);
+
+
+ecm_adj=0.068651;
+@ecm_adj=0.0;@
+
+nxr = dat0[.,1]; @ NXR @
+@ === explanatory components === @
+resid_Level = dat0[.,7];
+exo_Level = nxr-resid_Level;  @ average @
+
+resid_ecm3srlr0 = dat0[.,12];  @ ECM SRLR @
+resid_ecm3sr0 = dat0[.,14];    @ ECM SR only @
+
+@ computing cumulative residuals @
+resid_ecm3srlr = resid_ecm3srlr0;
+resid_ecm3sr = resid_ecm3sr0;
+i=2; do until i>T;
+   resid_ecm3srlr[i,1] = (1-ecm_adj)*resid_ecm3srlr[i-1,1]+resid_ecm3srlr0[i,1];
+   resid_ecm3sr[i,1] = (1-ecm_adj)*resid_ecm3sr[i-1,1]+resid_ecm3sr0[i,1];
+i=i+1; endo;
+@ explanatory components @
+exo_ecm3srlr = nxr-resid_ecm3srlr;
+exo_ecm3sr = nxr-resid_ecm3sr;
+   
+resid_diff0 = dat0[.,8]; 
+resid_diff = resid_diff0;
+i=2; do until i>T;
+   resid_diff[i,1] = resid_diff[i-1,1]+resid_diff0[i,1];
+i=i+1; endo;
+exo_diff = nxr-resid_diff;
+
+dat1_exo = nxr~exo_Level~exo_diff~exo_ecm3sr~exo_ecm3srlr;
+var_exp = vcx(dat1_exo);
+RV_exp = diag(var_exp)/var_exp[1,1];
+
+dat1_resid = nxr~resid_Level~resid_diff~resid_ecm3sr~resid_ecm3srlr;
+var_resid = vcx(dat1_resid);
+RV_resid = diag(var_resid)/var_resid[1,1];
+RV_exp = RV_exp[2:5,.];
+RV_resid = RV_resid[2:5,.];
+
+
+?"@=================================================@";
+?"@=============  NXR Decomposition  ===============@";
+?"@=================================================@";
+
+?" @============ Whole Sample ==============@";
+?;
+?"@ = nxr Level Diff SR  SR/LR  (%) ";
+?" BC_componets";;RV_exp'*100;
+?" Wedge_components";;RV_resid'*100;
+?" Joint_componets";;(1-RV_resid'-RV_exp')*100;
+?;
+
+t0 = 49;
+?"@=========  Since 1991:1  ============ @";
+?;
+var_exp = vcx(dat1_exo[t0:T,.]);
+RV_exp = diag(var_exp)/var_exp[1,1];
+
+var_resid = vcx(dat1_resid[t0:T,.]);
+RV_resid = diag(var_resid)/var_resid[1,1];
+
+RV_exp = RV_exp[2:5,.];
+RV_resid = RV_resid[2:5,.];
+
+
+?"@ = nxr Level Diff SR  SR/LR  (%) ";
+?" BC_componets";;RV_exp'*100;
+?" Wedge_components";;RV_resid'*100;
+?" Joint_componets";;(1-RV_resid'-RV_exp')*100;
+?;
+
+?"@=================================================@";
+?"@============ NXR and BC components ==============@";
+?"@=================================================@";
+?"  nxr static  dynamic";;
+?(nxr~exo_Level~exo_ecm3srlr);
+?;
+?;
+?"@=================================================@";
+?"@============ NXR and TW components ==============@";
+?"@=================================================@";
+?"  nxr static  dynamic";;
+?(nxr~resid_Level~resid_ecm3srlr);
+?;
+
+?"@=================================================@";
+?"@=============  TBY Decomposition ================@";
+?"@=================================================@";
+?;
+TBY = dat0[.,4];
+TRY = dat0[.,5];
+NXR = dat0[.,1];
+/*
+r_srlr = dat1_resid[.,5]; @ residual @
+r_srlr = r_srlr-meanc(r_srlr);
+*/
+
+TBY_approx = 0.5*TRY.*NXR;
+
+BC = exo_ecm3srlr;
+TW = resid_ecm3srlr;
+
+/*
+
+TW = r_srlr;
+BC = nxr-r_srlr;
+*/
+
+
+TRY_79 = TRY[1,1];
+TRY_Ave = meanc(TRY);
+t0 = 29;  @ 1986:1 @
+TRY_86 = meanc(TRY[t0:t0+3,.]);
+
+
+TRYs = TRY_79|TRY_Ave|TRY_86;
+let names = initial, average, year86;
+
+?"@==========================@";
+?"@===  Whole Sample ========@";
+?"@==========================@";
+?;
+i=1; do until i>rows(TRYs);
+   ?$names[i];
+   TRY0 = TRYs[i];
+
+   TBY_BC = 0.5*TRY0*BC;
+   TBY_TW = 0.5*TRY0*TW;
+   TBY_TRY = 0.5*(TRY-TRY0).*nxr;
+   TBY_Wedge = TBY_TW+TBY_TRY;
+
+
+   TBY_Wedge = TBY-TBY_BC;
+   Dat1= TBY~TBY_BC~TBY_Wedge~TBY_TW~TBY_TRY;
+      
+   var_TBY = vcx(dat1);
+
+   RV_TBY = var_TBY/var_TBY[1,1];
+   ?" BC";;RV_TBY[2,2]*100;
+   ?" Wedge";;RV_TBY[3,3]*100;
+   ?" Joint";;2*RV_TBY[2,3]*100;
+   ?" TRY0";;TRY0*100;
+   ?;
+   
+   if i==1; dat2 = TBY~TBY_BC~(TBY-TBY_BC); endif;
+   
+i=i+1; endo;
+?" TBY Business Cycle Components";
+?dat2[.,2]*100;
+?;
+
+?"@==========================@";
+?"@===  Since 1991:1 ========@";
+?"@==========================@";
+?;
+t0 = 59;
+i=1; do until i>rows(TRYs);
+   ?$names[i];
+   TRY0 = TRYs[i];
+
+   TBY_BC = 0.5*TRY0*BC[t0:T,.];
+   TBY_TW = 0.5*TRY0*TW[t0:T,.];
+   TBY_TRY = 0.5*(TRY[t0:T,.]-TRY0).*nxr[t0:T,.];
+   TBY_Wedge = TBY_TW+TBY_TRY;
+
+   TBY_Wedge = TBY[t0:T,.]-TBY_BC;
+   Dat1= TBY_approx[t0:T,.]~TBY_BC~TBY_Wedge~TBY_TW~TBY_TRY;
+   
+   var_TBY = vcx(dat1);
+
+   RV_TBY = var_TBY/var_TBY[1,1];
+   ?" BC ";;RV_TBY[2,2]*100;
+   ?" Wedge ";;RV_TBY[3,3]*100;
+   ?" Joint ";;2*RV_TBY[2,3]*100;
+   ?" TRY0 ";;TRY0*100;
+   ?;
+i=i+1; endo;
+?;

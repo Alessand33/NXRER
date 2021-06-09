@@ -1,0 +1,47 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Error Correction Model with extended window}
+\begin{tabular}{l*{6}{c}}
+\hline\hline
+          &\multicolumn{1}{c}{Level}&\multicolumn{1}{c}{Differences}&\multicolumn{1}{c}{ECM1}&\multicolumn{1}{c}{ECM2}&\multicolumn{1}{c}{ECM3}&\multicolumn{1}{c}{nn1\_post79LNI}\\
+\hline
+beta1     &                  &                  &                  &                  &                  &                  \\
+\_cons    &    0.223\sym{**} &  -0.0765\sym{**} &-0.000403         &-0.000406         &  0.00799         &  -0.0177         \\
+          & (0.0773)         & (0.0275)         &(0.000797)         & (0.0347)         & (0.0374)         & (0.0334)         \\
+[1em]
+g\_SR      &                  &                  &                  &                  &                  &                  \\
+\_cons    &                  &   -0.283\sym{*}  &   -0.139\sym{***}&   -0.120\sym{***}&   -0.181\sym{***}&   -0.205\sym{***}\\
+          &                  &  (0.112)         & (0.0287)         & (0.0236)         & (0.0275)         & (0.0258)         \\
+[1em]
+adj       &                  &                  &                  &                  &                  &                  \\
+\_cons    &                  &                  &                  &   0.0661\sym{***}&   0.0668\sym{***}&   0.0688\sym{***}\\
+          &                  &                  &                  & (0.0183)         & (0.0187)         & (0.0171)         \\
+[1em]
+g\_LR      &                  &                  &                  &                  &                  &                  \\
+\_cons    &                  &                  &                  &   -1.026\sym{***}&   -1.092\sym{***}&   -1.124\sym{***}\\
+          &                  &                  &                  &  (0.132)         &  (0.171)         &  (0.194)         \\
+[1em]
+IncSR     &                  &                  &                  &                  &                  &                  \\
+\_cons    &                  &                  &                  &                  &    0.607\sym{***}&    0.573\sym{***}\\
+          &                  &                  &                  &                  &  (0.146)         &  (0.144)         \\
+[1em]
+g\_LRNII   &                  &                  &                  &                  &                  &                  \\
+\_cons    &                  &                  &                  &                  &                  &    9.907\sym{**} \\
+          &                  &                  &                  &                  &                  &  (3.536)         \\
+[1em]
+dniiy2    &                  &                  &                  &                  &                  &                  \\
+\_cons    &                  &                  &                  &                  &                  &    1.349\sym{***}\\
+          &                  &                  &                  &                  &                  &  (0.285)         \\
+[1em]
+dniiy1    &                  &                  &                  &                  &                  &                  \\
+\_cons    &                  &                  &                  &                  &                  &   -1.533\sym{***}\\
+          &                  &                  &                  &                  &                  &  (0.180)         \\
+\hline
+N         &      148         &      148         &      149         &      149         &      149         &      149         \\
+rmse      &    0.348         &   0.0750         &   0.0214         &   0.0201         &   0.0191         &   0.0187         \\
+r2\_a      &   -5.823         &    0.682         &    0.261         &    0.352         &    0.411         &    0.437         \\
+\hline\hline
+\multicolumn{7}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{7}{l}{\footnotesize \sym{*} \(p<0.05\), \sym{**} \(p<0.01\), \sym{***} \(p<0.001\)}\\
+\end{tabular}
+\end{table}

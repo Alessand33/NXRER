@@ -1,0 +1,27 @@
+\begin{table}[htbp]\centering
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\caption{Short-run Income and Price Estimates with Alternative Measures of US Final Demand}
+\begin{tabular}{l*{5}{c}}
+\hline\hline
+          &\multicolumn{1}{c}{Benchmark}&\multicolumn{1}{c}{C\_Goods}&\multicolumn{1}{c}{Investment}&\multicolumn{1}{c}{CD+ID}&\multicolumn{1}{c}{CgID}\\
+\hline
+g\_SR      &                  &                  &                  &                  &                  \\
+\_cons    &   -0.189\sym{***}&   -0.274\sym{***}&   -0.229\sym{***}&   -0.215\sym{***}&   -0.201\sym{***}\\
+          & (0.0232)         & (0.0346)         & (0.0249)         & (0.0225)         & (0.0273)         \\
+[1em]
+gy\_SR     &                  &                  &                  &                  &                  \\
+\_cons    &    0.655\sym{***}&    0.109         &    0.332\sym{***}&    0.496\sym{***}&    0.556\sym{**} \\
+          &  (0.145)         &  (0.144)         & (0.0598)         & (0.0790)         &  (0.198)         \\
+[1em]
+alp       &                  &                  &                  &                  &                  \\
+\_cons    &                  &                  &                  &                  &    0.620\sym{***}\\
+          &                  &                  &                  &                  &  (0.121)         \\
+\hline
+N         &      148         &      148         &      148         &      148         &      148         \\
+rmse      &   0.0208         &   0.0232         &   0.0209         &   0.0209         &   0.0207         \\
+r2\_a      &    0.306         &    0.135         &    0.298         &    0.293         &    0.306         \\
+\hline\hline
+\multicolumn{6}{l}{\footnotesize Standard errors in parentheses}\\
+\multicolumn{6}{l}{\footnotesize \sym{*} \(p<0.05\), \sym{**} \(p<0.01\), \sym{***} \(p<0.001\)}\\
+\end{tabular}
+\end{table}
