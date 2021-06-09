@@ -1,0 +1,107 @@
+new; cls; 
+/*
+ GAUSS Program for Figure A1 
+ Converts differenced to level for wedges, and get home and foreign residuals for Step 3 
+ Input: FigureA1_Wedges_data.txt results from STATA Program (FigureA1_Wedges_Step1.do)
+ Output: Home and Foreign Wedges 
+*/
+
+
+
+output file = FigureA1_Wedges_Step2.out reset;
+
+load dat0[148,9] = FigureA1_Wedges_data.txt;  
+@nxr	Rel_Inc	NIIY	tby	tradey	totqn	resid_ave	resid_diff	resid_diff2	resid_ECM1	resid_ECM2	resid_ECM3	resid_ECM3srlr	resid_ECM3sr@   
+
+N = cols(dat0); 
+T = rows(dat0);
+
+
+
+?"@==================================================@";
+?"@=============== Foreign Demand     ===============@";
+?"@==================================================@";
+
+ecm_adj=0.0774918;  @ Adjustment coefficient from estimation @
+
+resid_rel0 = dat0[.,1];   @ foreign-Home @
+resid_home0 = dat0[.,2];  @ home error term @
+resid_foreign0 = dat0[.,3];    @ foregin error term @
+
+@ computing cumulative residuals @
+resid_home0=resid_home0-resid_home0[1,1]-resid_rel0[1,1]/2;
+resid_foreign0=resid_foreign0-resid_foreign0[1,1]+resid_rel0[1,1]/2;
+
+resid_home=resid_home0;
+resid_foreign=resid_foreign0;
+i=2; do until i>T;
+   resid_home[i,1] = (1-ecm_adj)*resid_home[i-1,1]+resid_home0[i,1];
+   resid_foreign[i,1] = (1-ecm_adj)*resid_foreign[i-1,1]+resid_foreign0[i,1];
+i=i+1; endo;
+resid_rel = resid_foreign-resid_home;
+?" wH  wF wFH";;
+?resid_home~resid_foreign~resid_rel;
+?;
+
+WedgeGap=resid_rel;
+
+?"@=====================================@";
+?"@============ No Inventory ===========@";
+?"@=====================================@";
+
+ecm_adj=0.0667378;   @ Adjustment coefficient from estimation @
+
+resid_rel0 = dat0[.,4];   @ foreign-Home @
+resid_home0 = dat0[.,5];  @ home error term @
+resid_foreign0 = dat0[.,6];    @ foregin error term @
+
+@ computing cumulative residuals @
+resid_home0=resid_home0-resid_home0[1,1]-resid_rel0[1,1]/2;
+resid_foreign0=resid_foreign0-resid_foreign0[1,1]+resid_rel0[1,1]/2;
+
+resid_home=resid_home0;
+resid_foreign=resid_foreign0;
+i=2; do until i>T;
+   resid_home[i,1] = (1-ecm_adj)*resid_home[i-1,1]+resid_home0[i,1];
+   resid_foreign[i,1] = (1-ecm_adj)*resid_foreign[i-1,1]+resid_foreign0[i,1];
+i=i+1; endo;
+resid_rel = resid_foreign-resid_home;
+?" wHnoInv  wFnoInv wFHnoInv";;
+?resid_home~resid_foreign~resid_rel;
+?;
+WedgeGap=WedgeGap~resid_rel;
+
+?"@===================================@";
+?"@============ Benchmark  ===========@";
+?"@===================================@";
+
+ecm_adj=0.0686509; @ Adjustment coefficient from estimation @
+
+resid_rel0 = dat0[.,7];   @ foreign-Home @
+resid_home0 = dat0[.,8];  @ home error term @
+resid_foreign0 = dat0[.,9];    @ foregin error term @
+
+
+@ computing cumulative residuals @
+resid_home0=resid_home0-resid_home0[1,1]-resid_rel0[1,1]/2;
+resid_foreign0=resid_foreign0-resid_foreign0[1,1]+resid_rel0[1,1]/2;
+
+resid_home=resid_home0;
+resid_foreign=resid_foreign0;
+i=2; do until i>T;
+   resid_home[i,1] = (1-ecm_adj)*resid_home[i-1,1]+resid_home0[i,1];
+   resid_foreign[i,1] = (1-ecm_adj)*resid_foreign[i-1,1]+resid_foreign0[i,1];
+i=i+1; endo;
+resid_rel = resid_foreign-resid_home;
+?" wHBench  wFBench wFHBench";;
+?resid_home~resid_foreign~resid_rel;
+?;
+
+WedgeGap=WedgeGap~resid_rel;  @ Benchmark No-Inventory  Foreign-Demand @
+?"@====================================@";
+?"@=========== Trade Wedge Gap ========@";
+?"@====================================@";
+?;
+?"@    Benchmark 		No-Inventory	  Foreign-Demand @";; 
+?WedgeGap[.,3 2 1];
+?;
