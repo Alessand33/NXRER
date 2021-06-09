@@ -1,0 +1,23 @@
+clear all;
+close all;
+clc;
+
+CorrData= xlsread('Figure3.xlsx',3);
+
+lwidth = 1.5;
+asize = 20;
+fsize = 20;
+pw = 8.5;
+ph = 11;
+lsize = 6;
+
+%figure('Position',[20,20,750,900],'Name',...
+figure('Position',[20,20,350,400],'Name',...
+    '','Color','w')
+set(gcf, 'PaperUnits', 'inches');
+set(gcf, 'PaperSize', [pw ph]);
+set(gcf, 'PaperOrientation', 'portrait')
+set(0,'DefaultAxesFontSize', 40)
+ZeroLine = zeros(length(T),1);
+
+

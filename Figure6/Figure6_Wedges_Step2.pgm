@@ -1,0 +1,39 @@
+new; cls; 
+/*
+ GAUSS Program for Figure 6 
+ Converts differenced to level for wedges, and get home and foreign residuals for Step 3 
+ Input: Figure6_Wedges_data.txt results from STATA Program (Figure6_Wedges_Step1.do)
+ Output: Home and Foreign Wedges 
+*/
+
+output file = Figure6_Wedges_Step2.out reset; @ output file @
+
+load dat0[148,16] = FigurE6_Wedges_data.txt; @ Input data @
+@nxr	Rel_Inc	NIIY	tby	tradey	totqn	resid_ave	resid_diff	resid_diff2	resid_ECM1	resid_ECM2	resid_ECM3	resid_ECM3srlr	resid_ECM3sr@
+N = cols(dat0); 
+T = rows(dat0);
+
+
+ecm_adj=0.068651; @ Adjustment coefficient from ECM3 @
+
+resid_ecm3srlr0 = dat0[.,12];  @ residuals from ECM3 SRLR @
+
+resid_home0 = dat0[.,15];  @ home error term @
+resid_foreign0 = dat0[.,16];    @ foregin error term @
+
+@ Initial @
+resid_home0=resid_home0-resid_home0[1,1]-resid_ecm3srlr0[1,1]/2;
+resid_foreign0=resid_foreign0-resid_foreign0[1,1]+resid_ecm3srlr0[1,1]/2;
+
+@ computing cumulative residuals @
+resid_home = resid_home0;
+resid_foreign = resid_foreign0;
+
+i=2; do until i>T;
+   resid_home[i,1] = (1-ecm_adj)*resid_home[i-1,1]+resid_home0[i,1];
+   resid_foreign[i,1] = (1-ecm_adj)*resid_foreign[i-1,1]+resid_foreign0[i,1];
+i=i+1; endo;
+?;
+?" resid_H  resid_F   ";;
+?resid_home~resid_foreign;
+
